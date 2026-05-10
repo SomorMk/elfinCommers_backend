@@ -5,6 +5,7 @@ import "dotenv/config";
 
 // Routes
 import authRoutes from "./routes/auth.routes.js";
+import profileRoutes from "./routes/profile.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
 
 // Middleware
@@ -23,8 +24,23 @@ app.get("/", (req, res) => {
   res.json({ message: "Production Level Express API" });
 });
 
+// Auth Routes
 app.use("/api/auth", authRoutes);
+
+// Profile Routes
+app.use("/api/profile", profileRoutes);
+
+// Blog Routes
 app.use("/api/blogs", blogRoutes);
+
+// 404 Not Found Handler
+app.use((req, res) => {
+  res.status(404).json({
+    statusCode: 404,
+    success: false,
+    message: "Route not found",
+  });
+});
 
 // Global Error Handler
 app.use(errorHandler);
