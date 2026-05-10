@@ -6,7 +6,7 @@ import "dotenv/config";
 // Routes
 import authRoutes from "./routes/auth.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
-import blogRoutes from "./routes/blog.routes.js";
+import categoriesRoutes from "./routes/categories.routes.js";
 
 // Middleware
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -30,8 +30,8 @@ app.use("/api/auth", authRoutes);
 // Profile Routes
 app.use("/api/profile", profileRoutes);
 
-// Blog Routes
-app.use("/api/blogs", blogRoutes);
+// Categories Routes
+app.use("/api/category", categoriesRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {

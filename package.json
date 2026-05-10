@@ -21,6 +21,7 @@
     "mongodb": "^7.1.1",
     "mongoose": "^9.4.1",
     "morgan": "^1.10.1",
-    "multer": "^2.1.1"
+    "multer": "^2.1.1",
+    "slugify": "^1.6.9"
   }
 }
