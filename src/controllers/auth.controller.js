@@ -7,6 +7,9 @@ const generateToken = (id) => {
   });
 };
 
+// ===========================================================
+//                    SIGNUP CONTROLLER
+// ===========================================================
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password, mobile } = req.body;
@@ -88,6 +91,9 @@ export const signup = async (req, res, next) => {
   }
 };
 
+// ===========================================================
+//                    SIGNIN CONTROLLER
+// ===========================================================
 export const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -95,16 +101,21 @@ export const signin = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
-      res.json({
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        mobile: user.mobile,
-        role: user.role,
-        isVerified: user.isVerified,
-        status: user.status,
-        profilePicture: user.profilePicture,
-        token: generateToken(user._id),
+      res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "User logged in successfully",
+        data: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          mobile: user.mobile,
+          role: user.role,
+          isVerified: user.isVerified,
+          status: user.status,
+          profilePicture: user.profilePicture,
+          token: generateToken(user._id),
+        },
       });
     } else {
       res.status(401);
@@ -119,6 +130,9 @@ export const signin = async (req, res, next) => {
   }
 };
 
+// ===========================================================
+//                    LOGOUT CONTROLLER
+// ===========================================================
 export const logout = async (req, res) => {
   res.status(200).json({
     statusCode: 200,
