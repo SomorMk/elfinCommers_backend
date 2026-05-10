@@ -1,4 +1,5 @@
 import Category from "../models/Categories.modal.js";
+import mongoose from "mongoose";
 
 // CREATE CATEGORY
 export const createCategories = async (req, res, next) => {
@@ -52,6 +53,15 @@ export const getCategories = async (req, res, next) => {
 export const updateCategories = async (req, res, next) => {
   try {
     const { categoryId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid Category ID",
+      });
+    }
+
     const { title, description, status, featured } = req.body;
 
     const category = await Category.findById(categoryId);
@@ -89,6 +99,14 @@ export const updateCategories = async (req, res, next) => {
 export const deleteCategories = async (req, res, next) => {
   try {
     const { categoryId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid Category ID format",
+      });
+    }
 
     const category = await Category.findById(categoryId);
 

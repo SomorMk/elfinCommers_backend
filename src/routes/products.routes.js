@@ -3,6 +3,7 @@ import { protect, restrictTo } from "../middlewares/auth.middleware.js";
 import { methodNotAllowed } from "../middlewares/methodNotAllowed.js";
 import {
   createProduct,
+  deleteProduct,
   getAllProducts,
   getSingleProduct,
 } from "../controllers/products.controller.js";
@@ -15,6 +16,12 @@ productRoutes.route("/").get(getAllProducts).all(methodNotAllowed);
 
 // SINGLE PRODUCT GET ROUTE - PUBLIC
 productRoutes.route("/:id").get(getSingleProduct).all(methodNotAllowed);
+
+// PRODUCT DELETE ROUTE - ADMIN ONLY
+productRoutes
+  .route("/delete/:id")
+  .delete(protect, restrictTo("admin"), deleteProduct)
+  .all(methodNotAllowed);
 
 // PRODUCT CREATE ROUTE - ADMIN ONLY
 productRoutes

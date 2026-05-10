@@ -1,4 +1,5 @@
 import Product from "../models/Product.modal.js";
+import mongoose from "mongoose";
 
 // CREATE PRODUCT
 export const createProduct = async (req, res, next) => {
@@ -68,7 +69,17 @@ export const getAllProducts = async (req, res, next) => {
 // GET SINGLE PRODUCT
 export const getSingleProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid Product ID format",
+      });
+    }
+
+    const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).json({
@@ -83,6 +94,41 @@ export const getSingleProduct = async (req, res, next) => {
       success: true,
       message: "Product fetched successfully",
       data: product,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE PRODUCT
+export const deleteProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid Product ID",
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    await product.deleteOne();
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Product deleted successfully",
     });
   } catch (error) {
     next(error);
