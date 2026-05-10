@@ -146,3 +146,82 @@ export const createOrder = async (req, res, next) => {
     next(error);
   }
 };
+
+// GET USER ORDER
+export const getUserOrder = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const orders = await Order.find({ user: userId })
+      .populate("user", "fullName email")
+      .sort({ createdAt: -1 });
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET ORDER BY ID
+export const getOrderById = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid order ID",
+      });
+    }
+    const order = await Order.findById(orderId)
+      .populate("user", "fullName email")
+      .populate("orderItems.product", "title images");
+    if (!order) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Order not found",
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// CANCEL ORDER
+// export const cancelOrder = async (req, res, next) => {
+//   try {
+//     const { orderId } = req.params;
+//     if (!mongoose.Types.ObjectId.isValid(orderId)) {
+//       return res.status(400).json({
+//         statusCode: 400,
+//         success: false,
+//         message: "Invalid order ID",
+//       });
+//     }
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res.status(404).json({
+//         statusCode: 404,
+//         success: false,
+//         message: "Order not found",
+//       });
+//     }
+//     order.status = "Cancelled";
+//     await order.save();
+//     res.status(200).json({
+//       statusCode: 200,
+//       success: true,
+//       message: "Order cancelled successfully",
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
