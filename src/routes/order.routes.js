@@ -1,9 +1,13 @@
 import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
 import { methodNotAllowed } from "../middlewares/methodNotAllowed.js";
-import { createOrder, getUserOrder } from "../controllers/order.controller.js";
+import {
+  createOrder,
+  getUserOrder,
+  getOrderById,
+  updateOrderStatus,
+} from "../controllers/order.controller.js";
 import upload from "../middlewares/multer.middleware.js";
-import { getOrderById } from "../controllers/order.controller.js";
 
 const orderRoutes = express.Router();
 
@@ -18,5 +22,17 @@ orderRoutes
 
 // GET ORDER BY ID ROUTE
 orderRoutes.route("/:orderId").get(protect, getOrderById).all(methodNotAllowed);
+
+// UPDATE ORDER STATUS ROUTE
+orderRoutes
+  .route("/:orderId/status")
+  .put(protect, upload.none(), updateOrderStatus)
+  .all(methodNotAllowed);
+
+// CANCEL ORDER ROUTE
+// orderRoutes
+//   .route("/:orderId/cancel")
+//   .put(protect, upload.none(), cancelOrder)
+//   .all(methodNotAllowed);
 
 export default orderRoutes;

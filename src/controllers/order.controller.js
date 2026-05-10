@@ -195,6 +195,53 @@ export const getOrderById = async (req, res, next) => {
   }
 };
 
+// UPDATE ORDER STATUS
+export const updateOrderStatus = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    const { orderStatus } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid order ID",
+      });
+    }
+
+    const validStatuses = ["Processing", "Shipped", "Delivered", "Cancelled"];
+    if (!validStatuses.includes(orderStatus)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: `Invalid order status. Allowed values are: ${validStatuses.join(", ")}`,
+      });
+    }
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    order.orderStatus = orderStatus;
+    await order.save();
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Order status updated successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // CANCEL ORDER
 // export const cancelOrder = async (req, res, next) => {
 //   try {
