@@ -134,3 +134,68 @@ export const deleteProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+// UPDATE PRODUCT
+export const updateProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid Product ID",
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const {
+      title,
+      description,
+      price,
+      discountPrice,
+      category,
+      stock,
+      brand,
+      isFeatured,
+      status,
+    } = req.body;
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        title,
+        description,
+        price,
+        discountPrice,
+        category,
+        stock,
+        brand,
+        isFeatured,
+        status,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Product updated successfully",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

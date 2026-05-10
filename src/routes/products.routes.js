@@ -6,6 +6,7 @@ import {
   deleteProduct,
   getAllProducts,
   getSingleProduct,
+  updateProduct,
 } from "../controllers/products.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 
@@ -13,6 +14,12 @@ const productRoutes = express.Router();
 
 // PRODUCT LIST GET ROUTE - PUBLIC
 productRoutes.route("/").get(getAllProducts).all(methodNotAllowed);
+
+// PRODUCT CREATE ROUTE - ADMIN ONLY
+productRoutes
+  .route("/create")
+  .post(protect, restrictTo("admin"), upload.array("images"), createProduct)
+  .all(methodNotAllowed);
 
 // SINGLE PRODUCT GET ROUTE - PUBLIC
 productRoutes.route("/:id").get(getSingleProduct).all(methodNotAllowed);
@@ -23,10 +30,10 @@ productRoutes
   .delete(protect, restrictTo("admin"), deleteProduct)
   .all(methodNotAllowed);
 
-// PRODUCT CREATE ROUTE - ADMIN ONLY
+// UPDATE PRODUCT ROUTE - ADMIN ONLY
 productRoutes
-  .route("/create")
-  .post(protect, restrictTo("admin"), upload.array("images"), createProduct)
+  .route("/update/:id")
+  .patch(protect, restrictTo("admin"), upload.array("images"), updateProduct)
   .all(methodNotAllowed);
 
 export default productRoutes;
