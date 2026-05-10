@@ -48,3 +48,43 @@ export const createProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+// GET ALL PRODUCTS
+export const getAllProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find({ status: "in-stock" });
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Products fetched successfully",
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET SINGLE PRODUCT
+export const getSingleProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Product fetched successfully",
+      data: product,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
