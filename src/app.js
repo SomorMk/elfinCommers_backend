@@ -11,6 +11,7 @@ import categoriesRoutes from "./routes/categories.routes.js";
 // Middleware
 import { errorHandler } from "./middlewares/errorHandler.js";
 import productRoutes from "./routes/products.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
 
 const app = express();
 
@@ -36,6 +37,9 @@ app.use("/api/category", categoriesRoutes);
 
 // Products Routes
 app.use("/api/product", productRoutes);
+
+// Cart Routes
+app.use("/api/cart", cartRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {
