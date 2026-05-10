@@ -3,31 +3,33 @@ import { protect, restrictTo } from "../middlewares/auth.middleware.js";
 import { methodNotAllowed } from "../middlewares/methodNotAllowed.js";
 import {
   createCategories,
-  //   getCategories,
-  //   updateCategories,
-  //   deleteCategories,
+  deleteCategories,
+  getCategories,
+  updateCategories,
 } from "../controllers/categories.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 
 const categoriesRoutes = express.Router();
 
-// CATEGORY CREATE ROUTE
+// CATEGORY GET ROUTE
+categoriesRoutes.route("/").get(getCategories).all(methodNotAllowed);
+
+// CATEGORY CREATE ROUTE - ADMIN ONLY
 categoriesRoutes
   .route("/create")
   .post(protect, restrictTo("admin"), upload.none(), createCategories)
   .all(methodNotAllowed);
 
-// CATEGORY GET ROUTE
-// categoriesRoutes.route("/").get(protect, getCategories).all(methodNotAllowed);
+// CATEGORY UPDATE ROUTE - ADMIN ONLY
+categoriesRoutes
+  .route("/update/:categoryId")
+  .put(protect, upload.none(), restrictTo("admin"), updateCategories)
+  .all(methodNotAllowed);
 
-// categoriesRoutes
-//   .route("/update/:categoryId")
-//   .put(protect, updateCategories)
-//   .all(methodNotAllowed);
-
-// categoriesRoutes
-//   .route("/delete/:categoryId")
-//   .delete(protect, deleteCategories)
-//   .all(methodNotAllowed);
+// CATEGORY DELETE ROUTE - ADMIN ONLY
+categoriesRoutes
+  .route("/delete/:categoryId")
+  .delete(protect, restrictTo("admin"), deleteCategories)
+  .all(methodNotAllowed);
 
 export default categoriesRoutes;
