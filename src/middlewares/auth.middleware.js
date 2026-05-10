@@ -23,14 +23,31 @@ export const protect = async (req, res, next) => {
 
       next();
     } catch (error) {
-      console.error(error);
-      res.status(401);
-      throw new Error("Not authorized, token failed");
+      return res.status(401).json({
+        statusCode: 401,
+        success: false,
+        message: "Provide a valid token",
+      });
     }
   }
 
   if (!token) {
-    res.status(401);
-    throw new Error("Not authorized, no token");
+    return res
+      .status(401)
+      .json({ statusCode: 401, success: false, message: "No token provided" });
   }
+};
+
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        statusCode: 403,
+        success: false,
+        message: "You do not have permission to perform this action",
+      });
+    }
+
+    next();
+  };
 };
