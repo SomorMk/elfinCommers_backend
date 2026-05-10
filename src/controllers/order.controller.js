@@ -243,32 +243,49 @@ export const updateOrderStatus = async (req, res, next) => {
 };
 
 // CANCEL ORDER
-// export const cancelOrder = async (req, res, next) => {
-//   try {
-//     const { orderId } = req.params;
-//     if (!mongoose.Types.ObjectId.isValid(orderId)) {
-//       return res.status(400).json({
-//         statusCode: 400,
-//         success: false,
-//         message: "Invalid order ID",
-//       });
-//     }
-//     const order = await Order.findById(orderId);
-//     if (!order) {
-//       return res.status(404).json({
-//         statusCode: 404,
-//         success: false,
-//         message: "Order not found",
-//       });
-//     }
-//     order.status = "Cancelled";
-//     await order.save();
-//     res.status(200).json({
-//       statusCode: 200,
-//       success: true,
-//       message: "Order cancelled successfully",
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const cancelOrder = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Invalid order ID",
+      });
+    }
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        statusCode: 404,
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    if (order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        statusCode: 400,
+        success: false,
+        message: "Order is already cancelled",
+      });
+    }
+
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    // Restore stock for cancelled items
+    for (const item of order.orderItems) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stock: item.quantity },
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Order cancelled successfully and stock restored",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

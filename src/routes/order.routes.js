@@ -1,11 +1,12 @@
 import express from "express";
-import { protect } from "../middlewares/auth.middleware.js";
+import { protect, restrictTo } from "../middlewares/auth.middleware.js";
 import { methodNotAllowed } from "../middlewares/methodNotAllowed.js";
 import {
   createOrder,
   getUserOrder,
   getOrderById,
   updateOrderStatus,
+  cancelOrder,
 } from "../controllers/order.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 
@@ -30,9 +31,9 @@ orderRoutes
   .all(methodNotAllowed);
 
 // CANCEL ORDER ROUTE
-// orderRoutes
-//   .route("/:orderId/cancel")
-//   .put(protect, upload.none(), cancelOrder)
-//   .all(methodNotAllowed);
+orderRoutes
+  .route("/:orderId/cancel")
+  .put(protect, restrictTo("admin"), upload.none(), cancelOrder)
+  .all(methodNotAllowed);
 
 export default orderRoutes;
