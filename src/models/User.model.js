@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "inactive", "blocked"],
       default: "active",
     },
+    accessToken: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );
