@@ -7,15 +7,17 @@ import {
   deleteBlog,
 } from "../controllers/blog.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
+import { methodNotAllowed } from "../middlewares/methodNotAllowed.js";
 
 const router = express.Router();
 
-router.get("/", getBlogs);
-router.get("/:id", getBlogById);
+router.route("/").get(getBlogs).post(protect, createBlog).all(methodNotAllowed);
 
-// Protected routes
-router.post("/", protect, createBlog);
-router.put("/:id", protect, updateBlog);
-router.delete("/:id", protect, deleteBlog);
+router
+  .route("/:id")
+  .get(getBlogById)
+  .put(protect, updateBlog)
+  .delete(protect, deleteBlog)
+  .all(methodNotAllowed);
 
 export default router;
