@@ -41,6 +41,9 @@ app.use("/api/category", categoriesRoutes);
 // Products Routes
 app.use("/api/product", productRoutes);
 
+// Wishlist Routes
+app.use("/api/wishlist", wishlistRoutes);
+
 // Cart Routes
 app.use("/api/cart", cartRoutes);
 
