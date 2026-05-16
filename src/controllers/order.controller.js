@@ -120,7 +120,7 @@ export const createOrder = async (req, res, next) => {
       user: userId,
       orderItems,
       shippingAddress,
-      paymentMethod: paymentMethod || "Cash on Delivery",
+      paymentMethod: paymentMethod || "cash_on_delivery",
       totalAmount,
     });
 
