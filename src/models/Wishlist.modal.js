@@ -6,19 +6,20 @@ const wishlistSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
   },
   {
     timestamps: true,
   },
 );
+
+// Compound index to prevent duplicate products for the same user
+wishlistSchema.index({ user: 1, product: 1 }, { unique: true });
 
 const Wishlist = mongoose.model("Wishlist", wishlistSchema);
 
