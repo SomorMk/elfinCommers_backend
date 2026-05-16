@@ -13,12 +13,15 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import productRoutes from "./routes/products.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import orderRoutes from "./routes/order.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import wishlistRoutes from "./routes/wishlist.routes.js";
 
 const app = express();
 
 // Standard Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 
@@ -39,11 +42,17 @@ app.use("/api/category", categoriesRoutes);
 // Products Routes
 app.use("/api/product", productRoutes);
 
+// Wishlist Routes
+app.use("/api/wishlist", wishlistRoutes);
+
 // Cart Routes
 app.use("/api/cart", cartRoutes);
 
 // Order Routes
 app.use("/api/order", orderRoutes);
+
+// Payment Routes
+app.use("/api/payment", paymentRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {
