@@ -1,5 +1,7 @@
 import User from "../models/User.model.js";
 import jwt from "jsonwebtoken";
+import fs from "fs";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "fallback_secret", {
@@ -13,10 +15,11 @@ const generateToken = (id) => {
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password, mobile } = req.body;
-    const profilePicture =
-      req.file && `${process.env.BASE_URL}/uploads/${req.file.filename}`;
 
     if (!username || !email || !password) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       res.status(422);
       return res.json({
         statusCode: 422,
@@ -26,6 +29,9 @@ export const signup = async (req, res, next) => {
     }
 
     if (!email.includes("@")) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       res.status(422);
       return res.json({
         statusCode: 422,
@@ -35,6 +41,9 @@ export const signup = async (req, res, next) => {
     }
 
     if (password.length < 8) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       res.status(422);
       return res.json({
         statusCode: 422,
@@ -45,6 +54,9 @@ export const signup = async (req, res, next) => {
 
     const userExists = await User.findOne({ email });
     if (userExists) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       res.status(422);
       return res.json({
         statusCode: 422,
@@ -53,12 +65,20 @@ export const signup = async (req, res, next) => {
       });
     }
 
+    // Upload profile picture to Cloudinary if file is uploaded, fallback to string URL in req.body
+    let profilePictureUrl = "";
+    if (req.file) {
+      profilePictureUrl = await uploadToCloudinary(req.file.path, "profiles");
+    } else if (req.body.profilePicture) {
+      profilePictureUrl = req.body.profilePicture;
+    }
+
     const user = new User({
       username,
       email,
       password,
       mobile,
-      profilePicture,
+      profilePicture: profilePictureUrl,
     });
 
     const accessToken = generateToken(user._id);
