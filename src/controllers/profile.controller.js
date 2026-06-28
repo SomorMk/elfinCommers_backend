@@ -1,4 +1,6 @@
 import User from "../models/User.model.js";
+import fs from "fs";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 
 // ===========================================================
 //               GET PROFILE INFO CONTROLLER
@@ -44,6 +46,9 @@ export const updateProfileInfo = async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     if (!user) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       res.status(404);
       return res.json({
         statusCode: 404,
@@ -67,7 +72,10 @@ export const updateProfileInfo = async (req, res, next) => {
     if (mobile) user.mobile = mobile;
 
     if (req.file) {
-      user.profilePicture = `${process.env.BASE_URL}/uploads/${req.file.filename}`;
+      const profilePictureUrl = await uploadToCloudinary(req.file.path, "profiles");
+      user.profilePicture = profilePictureUrl;
+    } else if (req.body.profilePicture) {
+      user.profilePicture = req.body.profilePicture;
     }
 
     const updatedUser = await user.save();
