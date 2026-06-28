@@ -389,11 +389,11 @@ export const resendOtp = async (req, res, next) => {
 
     await sendEmail({
       to: user.email,
-      subject: "Verify your email - Elfin Commerce",
+      subject: "Verify your email - Aevum",
       text: `Your new verification OTP code is: ${otp}. It will expire in 15 minutes.`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-          <h2 style="color: #4F46E5; text-align: center;">Welcome to Elfin Commerce!</h2>
+          <h2 style="color: #4F46E5; text-align: center;">Welcome to Aevum!</h2>
           <p>Here is your new 6-digit verification code to complete your registration:</p>
           <div style="background-color: #F3F4F6; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; padding: 15px; margin: 20px 0; border-radius: 6px; color: #1F2937;">
             ${otp}
